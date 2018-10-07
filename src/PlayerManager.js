@@ -38,6 +38,7 @@ class PlayerManager extends Collection {
         this.failoverQueue = [];
         this.failoverRate = options.failoverRate || 250;
         this.failoverLimit = options.failoverLimit || 1;
+        this._failingOver = false;
 
         this.defaultRegions = {
             asia: ['hongkong', 'singapore', 'sydney'],
@@ -107,6 +108,9 @@ class PlayerManager extends Collection {
                 this.processQueue(fn);
             }
         }
+        else {
+            this._failingOver = false;
+        }
     }
 
     /**
@@ -115,7 +119,7 @@ class PlayerManager extends Collection {
      * @private
      */
     queueFailover(fn) {
-        if (this.failoverQueue.length > 0) {
+        if (this._failingOver) {
             this.failoverQueue.push(fn);
         } else {
             return this.processQueue(fn);
@@ -128,7 +132,9 @@ class PlayerManager extends Collection {
      * @private
      */
     processQueue(fn) {
+        this._failingOver = true;
         fn();
+
         setTimeout(() => this.checkFailoverQueue(), this.failoverRate);
     }
 
@@ -382,7 +388,7 @@ class PlayerManager extends Collection {
             }
             return;
         }
-        
+
         player.connect({
             sessionId: data.session_id,
             guildId: data.guild_id,
