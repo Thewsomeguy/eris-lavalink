@@ -39,6 +39,7 @@ class PlayerManager extends Collection {
         this.failoverRate = options.failoverRate || 250;
         this.failoverLimit = options.failoverLimit || 1;
         this._failingOver = false;
+        this._failoverTimeout = null;
 
         this.defaultRegions = {
             asia: ['hongkong', 'singapore', 'sydney'],
@@ -135,7 +136,8 @@ class PlayerManager extends Collection {
         this._failingOver = true;
         fn();
 
-        setTimeout(() => this.checkFailoverQueue(), this.failoverRate);
+        clearTimeout(this._failoverTimeout);
+        this._failoverTimeout = (() => this.checkFailoverQueue(), this.failoverRate);
     }
 
     /**
