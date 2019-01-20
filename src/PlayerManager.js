@@ -335,9 +335,14 @@ class PlayerManager extends Collection {
         }
 
         nodes = nodes.sort((a, b) => {
-            let aload = a.stats.cpu ? (a.stats.cpu.systemLoad / a.stats.cpu.cores) * 100 : 0,
-                bload = b.stats.cpu ? (b.stats.cpu.systemLoad / b.stats.cpu.cores) * 100 : 0;
-            return aload - bload;
+            // let aload = a.stats.cpu ? (a.stats.cpu.systemLoad / a.stats.cpu.cores) * 100 : 0,
+            //    bload = b.stats.cpu ? (b.stats.cpu.systemLoad / b.stats.cpu.cores) * 100 : 0;
+            // return aload - bload;
+
+            const avc = a.stats.playingPlayers;
+            const bvc = b.stats.playingPlayers;
+
+            return avc - bvc;
         });
         return nodes[0];
     }
