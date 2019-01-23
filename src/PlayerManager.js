@@ -137,7 +137,7 @@ class PlayerManager extends Collection {
         fn();
 
         clearTimeout(this._failoverTimeout);
-        this._failoverTimeout = (() => this.checkFailoverQueue(), this.failoverRate);
+        this._failoverTimeout = setTimeout(() => this.checkFailoverQueue(), this.failoverRate);
     }
 
     /**
