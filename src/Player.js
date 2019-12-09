@@ -126,9 +126,8 @@ class Player extends EventEmitter {
             this.resume();
         }
 
-        this.queueEvent({ op: 'destroy', guildId: this.guildId });
-
         this.stop();
+        this.queueEvent({ op: 'destroy', guildId: this.guildId });
     }
 
     /**
