@@ -251,6 +251,8 @@ class PlayerManager extends Collection {
                         return player.onTrackException(message);
                     case 'TrackStuckEvent':
                         return player.onTrackStuck(message);
+                    case 'WebSocketClosedEvent':
+                        return player.onWebSocketClosed(message);
                     default:
                         return player.emit('warn', `Unexpected event type: ${message.type}`);
                 }

@@ -276,6 +276,15 @@ class Player extends EventEmitter {
     }
 
     /**
+     * Called on audio websocket close
+     * @param {Object} message The event data
+     * @private
+     */
+    onWebSocketClosed(message) {
+        this.emit('websocketClosed', message);
+    }
+
+    /**
      * Switch voice channel
      * @param {string} channelId Called when switching channels
      * @param {boolean} [reactive] Used if you want the bot to switch channels
