@@ -239,6 +239,17 @@ class Player extends EventEmitter {
     }
 
     /**
+     * Set the player filters
+     * @param {Object} filters The filters to set
+     * @returns {void}
+     */
+    setFilters(filters) {
+        this.node.rest.updatePlayer(this.guildId, {
+            filters,
+        });
+    }
+
+    /**
      * Called on track start
      * @param {Object} track The track that started playing
      * @private
