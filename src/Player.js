@@ -99,11 +99,12 @@ class Player extends EventEmitter {
      */
     connect(data) {
         this.emit('connect');
-        this.queueEvent({
-            op: 'voiceUpdate',
-            guildId: data.guildId,
-            sessionId: data.sessionId,
-            event: data.event,
+        this.node.rest.updatePlayer(data.guildId, {
+            voice: {
+                token: data.event.token,
+                endpoint: data.event.endpoint,
+                sessionId: data.sessionId,
+            },
         });
 
         process.nextTick(() => this.emit('ready'));
@@ -127,7 +128,7 @@ class Player extends EventEmitter {
         }
 
         this.stop();
-        this.queueEvent({ op: 'destroy', guildId: this.guildId });
+        this.node.rest.destroyPlayer(this.guildId);
     }
 
     /**
@@ -136,7 +137,7 @@ class Player extends EventEmitter {
      * @param {Object} [options] Optional options to send
      * @returns {void}
      */
-    play(track, options) {
+    play(track, userData, options) {
         this.lastTrack = this.track;
         this.track = track;
         this.playOptions = options;
@@ -146,13 +147,14 @@ class Player extends EventEmitter {
             return this.manager.switchNode(this);
         }
 
-        let payload = Object.assign({
-            op: 'play',
-            guildId: this.guildId,
-            track: track,
-        }, options);
+        this.node.rest.updatePlayer(this.guildId, {
+            track: {
+                encoded: track,
+                userData,
+            },
+            ...options,
+        });
 
-        this.queueEvent(payload);
         this.playing = !this.paused;
         this.timestamp = Date.now();
     }
@@ -162,12 +164,12 @@ class Player extends EventEmitter {
      * @returns {void}
      */
     stop() {
-        let payload = {
-            op: 'stop',
-            guildId: this.guildId,
-        };
+        this.node.rest.updatePlayer(this.guildId, {
+            track: {
+                encoded: null,
+            },
+        });
 
-        this.queueEvent(payload);
         this.playing = false;
         this.lastTrack = this.track;
         this.track = null;
@@ -188,10 +190,8 @@ class Player extends EventEmitter {
      * @returns {void}
      */
     setPause(pause) {
-        this.node.send({
-            op: 'pause',
-            guildId: this.guildId,
-            pause: pause,
+        this.node.rest.updatePlayer(this.guildId, {
+            paused: pause,
         });
 
         this.paused = pause;
@@ -222,10 +222,8 @@ class Player extends EventEmitter {
      * @returns {void}
      */
     seek(position) {
-        this.node.send({
-            op: 'seek',
-            guildId: this.guildId,
-            position: position,
+        this.node.rest.updatePlayer(this.guildId, {
+            position,
         });
     }
 
@@ -235,11 +233,18 @@ class Player extends EventEmitter {
      * @returns {void}
      */
     setVolume(volume) {
-        this.node.send({
-            op: 'volume',
-            guildId: this.guildId,
-            volume: volume,
+        this.node.rest.updatePlayer(this.guildId, {
+            volume,
         });
+    }
+
+    /**
+     * Called on track start
+     * @param {Object} track The track that started playing
+     * @private
+     */
+    onTrackStart(track) {
+        this.emit('start', track);
     }
 
     /**

@@ -1,6 +1,7 @@
 'use strict';
 
 const WebSocket = require('ws');
+const Rest = require('./Rest');
 
 var EventEmitter;
 
@@ -41,7 +42,8 @@ class Lavalink extends EventEmitter {
 
 		this.host = options.host;
 		this.port = options.port || 80;
-		this.address = `ws://${this.host}:${this.port}`;
+		this.rest = new Rest(this);
+		this.address = `ws://${this.host}:${this.port}/v4/websocket`;
 		this.region = options.region || null;
 		this.userId = options.userId;
 		this.numShards = options.numShards;

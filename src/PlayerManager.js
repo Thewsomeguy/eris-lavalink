@@ -234,6 +234,10 @@ class PlayerManager extends Collection {
         if (!message.op) return;
 
         switch (message.op) {
+            case 'ready': {
+                node.sessionId = message.sessionId;
+                return;
+            }
             case 'playerUpdate': {
                 let player = this.get(message.guildId);
                 if (!player) return;
@@ -245,6 +249,8 @@ class PlayerManager extends Collection {
                 if (!player) return;
 
                 switch (message.type) {
+                    case 'TrackStartEvent':
+                        return player.onTrackStart(message.track);
                     case 'TrackEndEvent':
                         return player.onTrackEnd(message);
                     case 'TrackExceptionEvent':
