@@ -93,6 +93,7 @@ class Player extends EventEmitter {
      * Connect to the Lavalink node
      * @param {Object} data The data used to connect
      * @param {string} data.guildId The guild ID to connect
+     * @param {string} data.channelId The channel ID to connect
      * @param {string} data.sessionId The voice connection session ID
      * @param {object} data.event The event data from the voice server update
      * @returns {void}
@@ -104,6 +105,7 @@ class Player extends EventEmitter {
                 token: data.event.token,
                 endpoint: data.event.endpoint,
                 sessionId: data.sessionId,
+                channelId: data.channelId
             },
         });
 
